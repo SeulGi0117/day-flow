@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>회복 루프 - DayFlow</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #E07856 0%, #F4A261 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .phone-frame {
+            width: 375px;
+            height: 812px;
+            background: white;
+            border-radius: 40px;
+            padding: 0;
+            box-shadow: 0 20px 60px rgba(224, 120, 86, 0.3);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .notch {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 150px;
+            height: 30px;
+            background: black;
+            border-radius: 0 0 20px 20px;
+            z-index: 10;
+        }
+
+        .status-bar {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 20px;
+            padding-top: 45px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .header {
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .back-button {
+            font-size: 24px;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .header-title {
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 24px 20px;
+            padding-bottom: 100px;
+        }
+
+        .icon-circle {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #fff5f2 0%, #ffe9e0 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            margin: 0 auto 24px;
+        }
+
+        .title {
+            font-size: 24px;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 12px;
+            color: #1a1a1a;
+        }
+
+        .subtitle {
+            font-size: 15px;
+            color: #666;
+            text-align: center;
+            line-height: 1.6;
+            margin-bottom: 32px;
+        }
+
+        .situation-card {
+            background: #fff5f2;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 24px;
+        }
+
+        .situation-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: #1a1a1a;
+        }
+
+        .situation-desc {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 12px;
+        }
+
+        .streak-info {
+            display: flex;
+            justify-content: space-between;
+            padding-top: 12px;
+            border-top: 1px dashed #E07856;
+        }
+
+        .streak-item {
+            text-align: center;
+        }
+
+        .streak-number {
+            font-size: 24px;
+            font-weight: 700;
+            color: #E07856;
+        }
+
+        .streak-label {
+            font-size: 12px;
+            color: #666;
+            margin-top: 4px;
+        }
+
+        .ai-suggestion {
+            background: white;
+            border: 2px solid #E07856;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 24px;
+        }
+
+        .ai-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .ai-avatar {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, #E07856 0%, #F4A261 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .ai-name {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .ai-message {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 16px;
+        }
+
+        .recovery-options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .option-card {
+            background: #f9f9f9;
+            border-radius: 12px;
+            padding: 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 2px solid transparent;
+        }
+
+        .option-card:hover {
+            border-color: #E07856;
+            background: #fff5f2;
+        }
+
+        .option-card.selected {
+            border-color: #E07856;
+            background: #fff5f2;
+        }
+
+        .option-title {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: #1a1a1a;
+        }
+
+        .option-desc {
+            font-size: 13px;
+            color: #666;
+            line-height: 1.5;
+        }
+
+        .bottom-buttons {
+            position: absolute;
+            bottom: 30px;
+            left: 20px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .primary-button {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #E07856 0%, #F4A261 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .primary-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(224, 120, 86, 0.3);
+        }
+
+        .secondary-button {
+            width: 100%;
+            padding: 16px;
+            background: white;
+            color: #E07856;
+            border: 2px solid #E07856;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .secondary-button:hover {
+            background: #fff5f2;
+        }
+    </style>
+</head>
+<body>
+    <div class="phone-frame">
+        <div class="notch"></div>
+        
+        <div class="status-bar">
+            <div>9:41</div>
+            <div></div>
+        </div>
+
+        <div class="header">
+            <div class="back-button" onclick="window.location.href='dashboard.html'">←</div>
+            <div class="header-title">회복 루프</div>
+            <div style="width: 24px;"></div>
+        </div>
+
+        <div class="content">
+            <div class="icon-circle">🔄</div>
+            
+            <div class="title">다시 시작할 수 있어요</div>
+            <div class="subtitle">
+                완벽하지 않아도 괜찮아요.<br>
+                실패해도 쉽게 복귀할 수 있는 시스템이에요.
+            </div>
+
+            <div class="situation-card">
+                <div class="situation-title">📊 현재 상황</div>
+                <div class="situation-desc">
+                    "아침 15분 쉐도잉" 루틴을 3일 연속 건너뛰었어요.<br>
+                    하지만 그 전까지 7일 연속 달성하셨습니다!
+                </div>
+                <div class="streak-info">
+                    <div class="streak-item">
+                        <div class="streak-number">7일</div>
+                        <div class="streak-label">최근 연속 기록</div>
+                    </div>
+                    <div class="streak-item">
+                        <div class="streak-number">3일</div>
+                        <div class="streak-label">건너뛴 날</div>
+                    </div>
+                    <div class="streak-item">
+                        <div class="streak-number">70%</div>
+                        <div class="streak-label">전체 달성률</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="ai-suggestion">
+                <div class="ai-header">
+                    <div class="ai-avatar">🤖</div>
+                    <div class="ai-name">AI 코치의 제안</div>
+                </div>
+                <div class="ai-message">
+                    건너뛴 이유를 분석해봤어요. 월요일 아침이 가장 어려우시네요.<br><br>
+                    더 쉬운 방법으로 다시 시작해볼까요?
+                </div>
+
+                <div class="recovery-options">
+                    <div class="option-card selected" onclick="selectOption(this)">
+                        <div class="option-title">🌱 라이트 트랙으로 조정</div>
+                        <div class="option-desc">
+                            매일 → 주 3-4회로 변경하고, 시간을 15분 → 10분으로 줄입니다
+                        </div>
+                    </div>
+
+                    <div class="option-card" onclick="selectOption(this)">
+                        <div class="option-title">⏰ 시작 시간 조정</div>
+                        <div class="option-desc">
+                            아침 7시 → 7시 30분으로 늦춰서 여유롭게 시작합니다
+                        </div>
+                    </div>
+
+                    <div class="option-card" onclick="selectOption(this)">
+                        <div class="option-title">💪 그대로 다시 시작</div>
+                        <div class="option-desc">
+                            조건은 그대로 두고 다시 도전합니다
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="bottom-buttons">
+            <button class="primary-button" onclick="applyRecovery()">
+                회복 루프 적용하기
+            </button>
+            <button class="secondary-button" onclick="window.location.href='dashboard.html'">
+                나중에 하기
+            </button>
+        </div>
+    </div>
+
+    <script>
+        function selectOption(element) {
+            // 모든 옵션에서 selected 클래스 제거
+            document.querySelectorAll('.option-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            
+            // 클릭한 옵션에 selected 클래스 추가
+            element.classList.add('selected');
+        }
+
+        function applyRecovery() {
+            alert('회복 루프가 적용되었습니다! 🎉\n\n새로운 루틴으로 다시 시작해볼까요?');
+            window.location.href = 'dashboard.html';
+        }
+    </script>
+</body>
+</html>

@@ -389,16 +389,21 @@
             <div class="ai-analysis">
                 <div class="ai-header">
                     <div class="ai-icon">🤖</div>
-                    <div class="ai-title">AI 코치의 분석</div>
+                    <div class="ai-title">AI 코치의 패턴 분석</div>
                 </div>
                 <div class="ai-content">
-                    "월요일 아침 루틴 실패율이 높습니다. 시작 시간을 7:00 → 7:30으로 조정하거나, 일요일 저녁에 미리 학습 자료를 준비해두는 것을 추천합니다."
+                    <strong>🔴 개선이 필요한 패턴</strong><br>
+                    "월요일 아침 루틴 실패율이 높습니다(40%). 주말 후유증이 있을 수 있어요."<br><br>
+                    
+                    <strong>✅ 잘하고 있는 부분</strong><br>
+                    "화~금은 100~80%로 안정적입니다. 평일 루틴은 완벽해요!"
                 </div>
-                <div class="suggestion-title">💡 개선 제안</div>
-                <div class="suggestion-item">월요일 시작 시간 30분 늦추기</div>
-                <div class="suggestion-item">일요일 저녁 준비 루틴 추가</div>
+                <div class="suggestion-title">💡 자동 개선 제안</div>
+                <div class="suggestion-item">월요일 시작 시간 7:00 → 7:30으로 조정</div>
+                <div class="suggestion-item">일요일 저녁 준비 루틴 자동 추가</div>
+                <div class="suggestion-item">월요일만 라이트 트랙(10분)으로 변경</div>
                 <div class="action-buttons">
-                    <button class="action-button button-accept">제안 수락</button>
+                    <button class="action-button button-accept" onclick="alert('AI 제안이 자동으로 적용됩니다! 🎉')">제안 수락</button>
                     <button class="action-button button-edit">직접 수정하기</button>
                 </div>
             </div>
