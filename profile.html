@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>마이페이지 - Promptly</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #E07856 0%, #F4A261 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .phone-frame {
+            width: 375px;
+            height: 812px;
+            background: white;
+            border-radius: 40px;
+            padding: 0;
+            box-shadow: 0 20px 60px rgba(224, 120, 86, 0.3);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .notch {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 150px;
+            height: 30px;
+            background: black;
+            border-radius: 0 0 20px 20px;
+            z-index: 10;
+        }
+
+        .status-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            padding-top: 40px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+        }
+
+        .back-button {
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        .header-title {
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .content-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 0 20px;
+            padding-bottom: 100px;
+        }
+
+        .profile-section {
+            text-align: center;
+            padding: 30px 0;
+        }
+
+        .profile-avatar {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #E07856 0%, #F4A261 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 32px;
+            margin: 0 auto 16px;
+        }
+
+        .profile-name {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .profile-email {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .stats-section {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            background: #f9fafb;
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #E07856;
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .menu-section {
+            margin-bottom: 24px;
+        }
+
+        .menu-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px;
+            background: #f9fafb;
+            border-radius: 12px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .menu-item:hover {
+            background: #f0f4ff;
+        }
+
+        .menu-item-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .menu-icon {
+            font-size: 20px;
+        }
+
+        .menu-text {
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .menu-arrow {
+            font-size: 14px;
+            color: #999;
+        }
+
+        .bottom-nav {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 70px;
+            background: white;
+            border-top: 1px solid #e0e0e0;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding-bottom: 20px;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
+            color: #999;
+            font-size: 12px;
+        }
+
+        .nav-item.active {
+            color: #E07856;
+        }
+
+        .nav-item.active::after {
+            content: '';
+            width: 4px;
+            height: 4px;
+            background: #E07856;
+            border-radius: 50%;
+            margin-top: 2px;
+        }
+
+        .nav-icon {
+            font-size: 20px;
+        }
+
+        .home-indicator {
+            position: absolute;
+            bottom: 8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 134px;
+            height: 5px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+    <div class="phone-frame">
+        <div class="notch"></div>
+        
+        <div class="status-bar">
+            <div>9:41</div>
+            <div>📶 📶 📶 🔋</div>
+        </div>
+
+        <div class="header">
+            <div class="back-button" onclick="window.location.href='dashboard.html'">‹</div>
+            <div class="header-title">마이페이지</div>
+            <div style="width: 20px;"></div>
+        </div>
+
+        <div class="content-area">
+            <div class="profile-section">
+                <div class="profile-avatar">👤</div>
+                <div class="profile-name">SeulGi</div>
+                <div class="profile-email">seulgi@example.com</div>
+            </div>
+
+            <div class="stats-section">
+                <div class="stat-card">
+                    <div class="stat-value">18</div>
+                    <div class="stat-label">연속 달성</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">892</div>
+                    <div class="stat-label">총 포인트</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">3</div>
+                    <div class="stat-label">진행 목표</div>
+                </div>
+            </div>
+
+            <div class="menu-section">
+                <div class="menu-title">목표 관리</div>
+                <div class="menu-item" onclick="window.location.href='onboarding-goal.html'">
+                    <div class="menu-item-left">
+                        <div class="menu-icon">➕</div>
+                        <div class="menu-text">새 목표 추가</div>
+                    </div>
+                    <div class="menu-arrow">›</div>
+                </div>
+                <div class="menu-item" onclick="window.location.href='dashboard.html'">
+                    <div class="menu-item-left">
+                        <div class="menu-icon">📋</div>
+                        <div class="menu-text">내 목표 목록</div>
+                    </div>
+                    <div class="menu-arrow">›</div>
+                </div>
+            </div>
+
+            <div class="menu-section">
+                <div class="menu-title">설정</div>
+                <div class="menu-item">
+                    <div class="menu-item-left">
+                        <div class="menu-icon">🔔</div>
+                        <div class="menu-text">알림 설정</div>
+                    </div>
+                    <div class="menu-arrow">›</div>
+                </div>
+                <div class="menu-item">
+                    <div class="menu-item-left">
+                        <div class="menu-icon">🎨</div>
+                        <div class="menu-text">테마 설정</div>
+                    </div>
+                    <div class="menu-arrow">›</div>
+                </div>
+                <div class="menu-item">
+                    <div class="menu-item-left">
+                        <div class="menu-icon">ℹ️</div>
+                        <div class="menu-text">도움말</div>
+                    </div>
+                    <div class="menu-arrow">›</div>
+                </div>
+                <div class="menu-item">
+                    <div class="menu-item-left">
+                        <div class="menu-icon">🚪</div>
+                        <div class="menu-text">로그아웃</div>
+                    </div>
+                    <div class="menu-arrow">›</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="bottom-nav">
+            <div class="nav-item" onclick="window.location.href='dashboard.html'">
+                <div class="nav-icon">🏠</div>
+            </div>
+            <div class="nav-item" onclick="window.location.href='calendar.html'">
+                <div class="nav-icon">📅</div>
+            </div>
+            <div class="nav-item" onclick="window.location.href='challenges.html'">
+                <div class="nav-icon">🔥</div>
+            </div>
+            <div class="nav-item" onclick="window.location.href='report.html'">
+                <div class="nav-icon">📊</div>
+            </div>
+            <div class="nav-item active" onclick="window.location.href='profile.html'">
+                <div class="nav-icon">⚙️</div>
+            </div>
+        </div>
+
+        <div class="home-indicator"></div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>일기 기록 - NoMore</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #E07856 0%, #F4A261 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .phone-frame {
+            width: 375px;
+            height: 812px;
+            background: white;
+            border-radius: 40px;
+            padding: 0;
+            box-shadow: 0 20px 60px rgba(224, 120, 86, 0.3);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .notch {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 150px;
+            height: 30px;
+            background: black;
+            border-radius: 0 0 20px 20px;
+            z-index: 10;
+        }
+
+        .status-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            padding-top: 40px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+        }
+
+        .back-button {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            font-size: 20px;
+        }
+
+        .header-title {
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .save-button {
+            background: #E07856;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .content-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            padding-bottom: 100px;
+        }
+
+        .date-section {
+            margin-bottom: 24px;
+        }
+
+        .date-label {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 8px;
+        }
+
+        .date-display {
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .text-area {
+            width: 100%;
+            min-height: 200px;
+            padding: 16px;
+            border: 1px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 16px;
+            font-family: inherit;
+            resize: none;
+            outline: none;
+            margin-bottom: 20px;
+        }
+
+        .text-area:focus {
+            border-color: #E07856;
+        }
+
+        .photo-section {
+            margin-bottom: 24px;
+        }
+
+        .photo-label {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .photo-upload {
+            border: 2px dashed #e0e0e0;
+            border-radius: 12px;
+            padding: 40px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .photo-upload:hover {
+            border-color: #E07856;
+            background: #f0f4ff;
+        }
+
+        .photo-upload-icon {
+            font-size: 48px;
+            margin-bottom: 8px;
+        }
+
+        .photo-upload-text {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .photo-preview {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .photo-item {
+            aspect-ratio: 1;
+            border-radius: 8px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .photo-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .photo-remove {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            background: rgba(0, 0, 0, 0.6);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .emotion-section {
+            margin-bottom: 24px;
+        }
+
+        .emotion-label {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .emotion-buttons {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .emotion-button {
+            padding: 12px 20px;
+            border: 1.5px solid #e0e0e0;
+            border-radius: 20px;
+            background: white;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .emotion-button:hover {
+            border-color: #E07856;
+        }
+
+        .emotion-button.selected {
+            background: #E07856;
+            color: white;
+            border-color: #E07856;
+        }
+
+        .bottom-nav {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 70px;
+            background: white;
+            border-top: 1px solid #e0e0e0;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding-bottom: 20px;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
+            color: #999;
+            font-size: 12px;
+        }
+
+        .nav-item.active {
+            color: #E07856;
+        }
+
+        .nav-item.active::after {
+            content: '';
+            width: 4px;
+            height: 4px;
+            background: #E07856;
+            border-radius: 50%;
+            margin-top: 2px;
+        }
+
+        .nav-icon {
+            font-size: 20px;
+        }
+
+        .home-indicator {
+            position: absolute;
+            bottom: 8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 134px;
+            height: 5px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+    <div class="phone-frame">
+        <div class="notch"></div>
+        
+        <div class="status-bar">
+            <div>9:41</div>
+            <div>📶 📶 📶 🔋</div>
+        </div>
+
+        <div class="header">
+            <div class="back-button" onclick="window.location.href='dashboard.html'">‹</div>
+            <div class="header-title">오늘의 기록</div>
+            <button class="save-button">저장</button>
+        </div>
+
+        <div class="content-area">
+            <div class="date-section">
+                <div class="date-label">날짜</div>
+                <div class="date-display">2025년 12월 21일</div>
+            </div>
+
+            <textarea class="text-area" placeholder="오늘의 실행 경험을 자유롭게 기록해보세요..."></textarea>
+
+            <div class="photo-section">
+                <div class="photo-label">사진 첨부</div>
+                <div class="photo-upload" onclick="document.getElementById('photo-input').click()">
+                    <div class="photo-upload-icon">📷</div>
+                    <div class="photo-upload-text">사진을 추가하려면 탭하세요</div>
+                </div>
+                <input type="file" id="photo-input" accept="image/*" multiple style="display: none;">
+                <div class="photo-preview" id="photo-preview"></div>
+            </div>
+
+            <div class="emotion-section">
+                <div class="emotion-label">오늘의 감정</div>
+                <div class="emotion-buttons">
+                    <button class="emotion-button">😊 기쁨</button>
+                    <button class="emotion-button">😌 평온</button>
+                    <button class="emotion-button">😓 피곤</button>
+                    <button class="emotion-button">😢 슬픔</button>
+                    <button class="emotion-button">😤 화남</button>
+                    <button class="emotion-button">😎 자신감</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="bottom-nav">
+            <div class="nav-item" onclick="window.location.href='dashboard.html'">
+                <div class="nav-icon">🏠</div>
+            </div>
+            <div class="nav-item" onclick="window.location.href='calendar.html'">
+                <div class="nav-icon">📅</div>
+            </div>
+            <div class="nav-item" onclick="window.location.href='challenges.html'">
+                <div class="nav-icon">🔥</div>
+            </div>
+            <div class="nav-item" onclick="window.location.href='report.html'">
+                <div class="nav-icon">📊</div>
+            </div>
+            <div class="nav-item" onclick="window.location.href='profile.html'">
+                <div class="nav-icon">⚙️</div>
+            </div>
+        </div>
+
+        <div class="home-indicator"></div>
+    </div>
+
+    <script>
+        // 감정 버튼 선택
+        document.querySelectorAll('.emotion-button').forEach(button => {
+            button.addEventListener('click', function() {
+                document.querySelectorAll('.emotion-button').forEach(btn => btn.classList.remove('selected'));
+                this.classList.add('selected');
+            });
+        });
+
+        // 사진 업로드
+        document.getElementById('photo-input').addEventListener('change', function(e) {
+            const preview = document.getElementById('photo-preview');
+            preview.innerHTML = '';
+            
+            Array.from(e.target.files).forEach(file => {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const photoItem = document.createElement('div');
+                    photoItem.className = 'photo-item';
+                    photoItem.innerHTML = `
+                        <img src="${e.target.result}" alt="Uploaded photo">
+                        <button class="photo-remove" onclick="this.parentElement.remove()">×</button>
+                    `;
+                    preview.appendChild(photoItem);
+                };
+                reader.readAsDataURL(file);
+            });
+        });
+
+        // 네비게이션 클릭 이벤트
+        document.querySelectorAll('.nav-item').forEach((item, index) => {
+            item.addEventListener('click', function() {
+                if (index === 0) {
+                    window.location.href = 'dashboard.html';
+                } else if (index === 1) {
+                    window.location.href = 'profile.html';
+                } else if (index === 2) {
+                    window.location.href = 'report.html';
+                }
+            });
+        });
+
+        // 저장 버튼 클릭 이벤트
+        document.querySelector('.save-button').addEventListener('click', function() {
+            alert('기록이 저장되었습니다!');
+            window.location.href = 'dashboard.html';
+        });
+    </script>
+</body>
+</html>
