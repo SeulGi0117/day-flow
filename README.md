@@ -1,6 +1,7 @@
 # DayFlow - 데모 목업
 
 **DayFlow**는 AI 기반 개인화 루틴 생성 및 목표 관리 앱의 UI/UX 목업입니다.
+데모 링크: https://seulgi0117.github.io/day-flow/dashboard.html
 
 이 프로젝트는 제품 기획 및 디자인 컨셉을 시각화하기 위한 정적 HTML 데모이며, 실제 백엔드 로직이나 AI 기능은 구현되어 있지 않습니다. 화면 간 연결과 기본적인 인터랙션만 포함되어 있습니다.
 
